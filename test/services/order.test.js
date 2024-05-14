@@ -1,14 +1,12 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import FilteringError from '../../src/errors/general/filtering_error';
-import Order from '../../src/models/order';
-import Rate from '../../src/models/rate';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import FilteringError from "../../dist/cjs/src/errors/general/filtering_error";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
 
-describe('Order Service', function () {
+describe("Order Service", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -20,24 +18,24 @@ describe('Order Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('creates an order', async function () {
+  it("creates an order", async function () {
     const order = await this.client.Order.create(Fixture.basicOrder());
 
-    expect(order).to.be.an.instanceOf(Order);
+    expect(order.object).to.be.equal("Order");
     expect(order.id).to.match(/^order_/);
     expect(order.rates).to.exist;
   });
 
-  it('retrieves an order', async function () {
+  it("retrieves an order", async function () {
     const order = await this.client.Order.create(Fixture.basicOrder());
 
     const retrievedOrder = await this.client.Order.retrieve(order.id);
 
-    expect(retrievedOrder).to.be.an.instanceOf(Order);
+    expect(retrievedOrder.object).to.be.equal("Order");
     expect(retrievedOrder.id).to.equal(order.id);
   });
 
-  it('get rates of an order', async function () {
+  it("get rates of an order", async function () {
     const order = await this.client.Order.create(Fixture.basicOrder());
 
     const rates = await this.client.Order.getRates(order.id);
@@ -46,17 +44,17 @@ describe('Order Service', function () {
 
     expect(ratesArray).to.be.an.instanceOf(Array);
     ratesArray.forEach((rate) => {
-      expect(rate).to.be.an.instanceOf(Rate);
+      expect(rate.object).to.be.equal("Rate");
     });
   });
 
-  it('buys an order', async function () {
+  it("buys an order", async function () {
     const order = await this.client.Order.create(Fixture.basicOrder());
 
     const boughtOrder = await this.client.Order.buy(
       order.id,
       Fixture.usps(),
-      Fixture.uspsService(),
+      Fixture.uspsService()
     );
 
     const shipmentsArray = boughtOrder.shipments;
@@ -66,24 +64,24 @@ describe('Order Service', function () {
     });
   });
 
-  it('gets the lowest rate', async function () {
+  it("gets the lowest rate", async function () {
     const order = await this.client.Order.create(Fixture.basicOrder());
 
     // Test lowest rate with no filters
     const lowestRate = order.lowestRate();
-    expect(lowestRate.service).to.equal('GroundAdvantage');
-    expect(lowestRate.rate).to.equal('6.07');
-    expect(lowestRate.carrier).to.equal('USPS');
+    expect(lowestRate.service).to.equal("GroundAdvantage");
+    expect(lowestRate.rate).to.equal("6.07");
+    expect(lowestRate.carrier).to.equal("USPS");
 
     // Test lowest rate with service filter (this rate is higher than the lowest but should filter)
-    const lowestRateService = order.lowestRate(null, ['Priority']);
-    expect(lowestRateService.service).to.equal('Priority');
-    expect(lowestRateService.rate).to.equal('6.95');
-    expect(lowestRateService.carrier).to.equal('USPS');
+    const lowestRateService = order.lowestRate(null, ["Priority"]);
+    expect(lowestRateService.service).to.equal("Priority");
+    expect(lowestRateService.rate).to.equal("6.95");
+    expect(lowestRateService.carrier).to.equal("USPS");
 
     // Test lowest rate with carrier filter (should error due to bad carrier)
     expect(function () {
-      order.lowestRate(['BAD CARRIER'], null);
-    }).to.throw(FilteringError, 'No rates found.');
+      order.lowestRate(["BAD CARRIER"], null);
+    }).to.throw(FilteringError, "No rates found.");
   });
 });

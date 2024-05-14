@@ -1,12 +1,11 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import Rate from '../../src/models/rate';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
 
-describe('Rate Service', function () {
+describe("Rate Service", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -18,12 +17,12 @@ describe('Rate Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('retrieves a rate', async function () {
+  it("retrieves a rate", async function () {
     const shipment = await this.client.Shipment.create(Fixture.basicShipment());
 
     const rate = await this.client.Rate.retrieve(shipment.rates[0].id);
 
-    expect(rate).to.be.an.instanceOf(Rate);
+    expect(rate.object).to.be.equal("Rate");
     expect(rate.id).to.match(/^rate_/);
   });
 });

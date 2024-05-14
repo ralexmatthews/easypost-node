@@ -1,0 +1,5 @@
+- Replace all `Array<Foo>` with `Foo[]`
+- Figure out something to do with `updated_at` and `created_at`
+- Prettier
+- Check `_all<{foo: IFoo[]}>` and not `_all<IFoo>`
+- fix `getNextPage` first `any` param to be at least `{ [key]: any }`

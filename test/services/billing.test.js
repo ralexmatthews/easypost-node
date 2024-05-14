@@ -1,69 +1,69 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
+import EasyPostClient from "../../dist/cjs/src/easypost";
 import {
   MockMiddleware,
   MockRequest,
   MockRequestMatchRule,
   MockRequestResponseInfo,
-} from '../helpers/mocking';
+} from "../helpers/mocking";
 
 const middleware = (request) => {
   return new MockMiddleware(request, [
     new MockRequest(
-      new MockRequestMatchRule('POST', 'v2\\/bank_accounts\\/\\S*\\/charges$'),
-      new MockRequestResponseInfo(200, {}),
+      new MockRequestMatchRule("POST", "v2\\/bank_accounts\\/\\S*\\/charges$"),
+      new MockRequestResponseInfo(200, {})
     ),
     new MockRequest(
-      new MockRequestMatchRule('POST', 'v2\\/credit_cards\\/\\S*\\/charges$'),
-      new MockRequestResponseInfo(200, {}),
+      new MockRequestMatchRule("POST", "v2\\/credit_cards\\/\\S*\\/charges$"),
+      new MockRequestResponseInfo(200, {})
     ),
     new MockRequest(
-      new MockRequestMatchRule('DELETE', 'v2\\/bank_accounts\\/\\S*$'),
-      new MockRequestResponseInfo(200, {}),
+      new MockRequestMatchRule("DELETE", "v2\\/bank_accounts\\/\\S*$"),
+      new MockRequestResponseInfo(200, {})
     ),
     new MockRequest(
-      new MockRequestMatchRule('DELETE', 'v2\\/credit_cards\\/\\S*$'),
-      new MockRequestResponseInfo(200, {}),
+      new MockRequestMatchRule("DELETE", "v2\\/credit_cards\\/\\S*$"),
+      new MockRequestResponseInfo(200, {})
     ),
     new MockRequest(
-      new MockRequestMatchRule('GET', 'v2\\/payment_methods$'),
+      new MockRequestMatchRule("GET", "v2\\/payment_methods$"),
       new MockRequestResponseInfo(200, {
-        id: 'summary_123',
+        id: "summary_123",
         primary_payment_method: {
-          id: 'card_123',
-          last4: '1234',
+          id: "card_123",
+          last4: "1234",
         },
         secondary_payment_method: {
-          id: 'bank_123',
-          bank_name: 'Mock Bank',
+          id: "bank_123",
+          bank_name: "Mock Bank",
         },
-      }),
+      })
     ),
   ]);
 };
 
-describe('Billing Service', function () {
+describe("Billing Service", function () {
   before(function () {
     this.client = new EasyPostClient(process.env.EASYPOST_TEST_API_KEY, {
       requestMiddleware: middleware,
     });
   });
 
-  it('fund a wallet', async function () {
+  it("fund a wallet", async function () {
     expect(async () => {
-      await this.client.Billing.fundWallet('2000', 'primary');
+      await this.client.Billing.fundWallet("2000", "primary");
     }).not.to.throw();
   });
 
-  it('delete a payment method', async function () {
+  it("delete a payment method", async function () {
     expect(async () => {
-      await this.client.Billing.deletePaymentMethod('primary');
+      await this.client.Billing.deletePaymentMethod("primary");
     }).not.to.throw();
   });
 
-  it('retrieves all payment methods', async function () {
+  it("retrieves all payment methods", async function () {
     const paymentMethods = await this.client.Billing.retrievePaymentMethods();
 
     expect(paymentMethods.primary_payment_method).to.exist;

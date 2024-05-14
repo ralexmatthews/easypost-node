@@ -1,13 +1,12 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import CustomsInfo from '../../src/models/customs_info';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
-import { withoutParams } from '../helpers/utils';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
+import { withoutParams } from "../helpers/utils";
 
-describe('CustomsInfo Service', function () {
+describe("CustomsInfo Service", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -19,19 +18,27 @@ describe('CustomsInfo Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('creates a customs info', async function () {
-    const customsInfo = await this.client.CustomsInfo.create(Fixture.basicCustomsInfo());
+  it("creates a customs info", async function () {
+    const customsInfo = await this.client.CustomsInfo.create(
+      Fixture.basicCustomsInfo()
+    );
 
-    expect(customsInfo).to.be.an.instanceOf(CustomsInfo);
+    expect(customsInfo.object).to.be.equal("CustomsInfo");
     expect(customsInfo.id).to.match(/^cstinfo_/);
-    expect(customsInfo.eel_pfc).to.equal('NOEEI 30.37(a)');
+    expect(customsInfo.eel_pfc).to.equal("NOEEI 30.37(a)");
   });
 
-  it('retrieves a customs info', async function () {
-    const customsInfo = await this.client.CustomsInfo.create(Fixture.basicCustomsInfo());
-    const retrievedCustomsInfo = await this.client.CustomsInfo.retrieve(customsInfo.id);
+  it("retrieves a customs info", async function () {
+    const customsInfo = await this.client.CustomsInfo.create(
+      Fixture.basicCustomsInfo()
+    );
+    const retrievedCustomsInfo = await this.client.CustomsInfo.retrieve(
+      customsInfo.id
+    );
 
-    expect(customsInfo).to.be.an.instanceOf(CustomsInfo);
-    expect(withoutParams(retrievedCustomsInfo)).to.deep.include(withoutParams(customsInfo));
+    expect(customsInfo.object).to.be.equal("CustomsInfo");
+    expect(withoutParams(retrievedCustomsInfo)).to.deep.include(
+      withoutParams(customsInfo)
+    );
   });
 });

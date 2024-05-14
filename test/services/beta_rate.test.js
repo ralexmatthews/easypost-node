@@ -1,13 +1,12 @@
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import FilteringError from '../../src/errors/general/filtering_error';
-import Rate from '../../src/models/rate';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import FilteringError from "../../dist/cjs/src/errors/general/filtering_error";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
 
 /* eslint-disable func-names */
-describe('BetaRateService', function () {
+describe("BetaRateService", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -19,35 +18,39 @@ describe('BetaRateService', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('retrieves a list of stateless rates', async function () {
+  it("retrieves a list of stateless rates", async function () {
     const statelessRates = await this.client.BetaRate.retrieveStatelessRates(
-      Fixture.basicShipment(),
+      Fixture.basicShipment()
     );
 
     statelessRates.forEach((rate) => {
-      expect(rate).to.be.an.instanceOf(Rate);
-      expect(rate).to.not.have.property('id');
+      expect(rate.object).to.be.equal("Rate");
+      expect(rate).to.not.have.property("id");
     });
   });
 
-  it('retrieve the lowest rate', async function () {
+  it("retrieve the lowest rate", async function () {
     const statelessRates = await this.client.BetaRate.retrieveStatelessRates(
-      Fixture.basicShipment(),
+      Fixture.basicShipment()
     );
 
     const lowestStatelessRate = this.client.Utils.getLowestRate(statelessRates);
 
-    expect(lowestStatelessRate.service).to.be.equal('GroundAdvantage');
-    expect(lowestStatelessRate.rate).to.be.equal('6.07');
+    expect(lowestStatelessRate.service).to.be.equal("GroundAdvantage");
+    expect(lowestStatelessRate.rate).to.be.equal("6.07");
   });
 
-  it('retrieve invalid lowest rate', async function () {
+  it("retrieve invalid lowest rate", async function () {
     const statelessRates = await this.client.BetaRate.retrieveStatelessRates(
-      Fixture.basicShipment(),
+      Fixture.basicShipment()
     );
 
     expect(() => {
-      this.client.Utils.getLowestRate(statelessRates, ['invalid_carrier'], ['invalid_service']);
-    }).to.throw(FilteringError, 'No rates found.');
+      this.client.Utils.getLowestRate(
+        statelessRates,
+        ["invalid_carrier"],
+        ["invalid_service"]
+      );
+    }).to.throw(FilteringError, "No rates found.");
   });
 });

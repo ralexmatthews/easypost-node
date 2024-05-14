@@ -1,12 +1,11 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import ApiKey from '../../src/models/api_key';
-import * as setupPolly from '../helpers/setup_polly';
-import FilteringError from '../../src/errors/general/filtering_error';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import * as setupPolly from "../helpers/setup_polly";
+import FilteringError from "../../dist/cjs/src/errors/general/filtering_error";
 
-describe('ApiKey Service', function () {
+describe("ApiKey Service", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -18,11 +17,11 @@ describe('ApiKey Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('retrieves all apiKeys', async function () {
+  it("retrieves all apiKeys", async function () {
     const apiKeys = await this.client.ApiKey.all();
 
     apiKeys.keys.forEach((apiKey) => {
-      expect(apiKey).to.be.an.instanceOf(ApiKey);
+      expect(apiKey.object).to.be.equal("ApiKey");
     });
   });
 
@@ -34,13 +33,13 @@ describe('ApiKey Service', function () {
   });
 
   it("throws FilteringError when trying to retrieve child user's API keys", async function () {
-    const fakeChildId = 'user_blah';
+    const fakeChildId = "user_blah";
 
     try {
       await this.client.ApiKey.retrieveApiKeysForUser(fakeChildId);
-      throw new Error('Test did not throw the expected error.');
+      throw new Error("Test did not throw the expected error.");
     } catch (error) {
-      expect(error).to.be.an.instanceOf(FilteringError, 'No child found.');
+      expect(error).to.be.an.instanceOf(FilteringError, "No child found.");
     }
   });
 });

@@ -1,17 +1,15 @@
 /* eslint-disable func-names */
-import fs from 'fs';
-import { resolve } from 'path';
-import { expect } from 'chai';
+import fs from "fs";
+import { resolve } from "path";
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import Event from '../../src/models/event';
-import Payload from '../../src/models/payload';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
-import NotFoundError from '../../src/errors/api/not_found_error';
-import EndOfPaginationError from '../../src/errors/general/end_of_pagination_error';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
+import NotFoundError from "../../dist/cjs/src/errors/api/not_found_error";
+import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
 
-describe('Event Service', function () {
+describe("Event Service", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -23,18 +21,20 @@ describe('Event Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('retrieves an event', async function () {
+  it("retrieves an event", async function () {
     const events = await this.client.Event.all({
       page_size: Fixture.pageSize(),
     });
 
-    const retrievedEvent = await this.client.Event.retrieve(events.events[0].id);
+    const retrievedEvent = await this.client.Event.retrieve(
+      events.events[0].id
+    );
 
-    expect(retrievedEvent).to.be.an.instanceOf(Event);
+    expect(retrievedEvent.object).to.be.equal("Event");
     expect(retrievedEvent.id).to.match(/^evt_/);
   });
 
-  it('retrieves all events', async function () {
+  it("retrieves all events", async function () {
     const events = await this.client.Event.all({
       page_size: Fixture.pageSize(),
     });
@@ -44,14 +44,19 @@ describe('Event Service', function () {
     expect(eventsArray.length).to.be.lessThanOrEqual(Fixture.pageSize());
     expect(events.has_more).to.exist;
     eventsArray.forEach((event) => {
-      expect(event).to.be.an.instanceOf(Event);
+      expect(event.object).to.be.equal("Event");
     });
   });
 
-  it('retrieves next page of events', async function () {
+  it("retrieves next page of events", async function () {
     try {
-      const events = await this.client.Event.all({ page_size: Fixture.pageSize() });
-      const nextPage = await this.client.Event.getNextPage(events, Fixture.pageSize());
+      const events = await this.client.Event.all({
+        page_size: Fixture.pageSize(),
+      });
+      const nextPage = await this.client.Event.getNextPage(
+        events,
+        Fixture.pageSize()
+      );
 
       const firstIdOfFirstPage = events.events[0].id;
       const firstIdOfSecondPage = nextPage.events[0].id;
@@ -59,12 +64,12 @@ describe('Event Service', function () {
       expect(firstIdOfFirstPage).to.not.equal(firstIdOfSecondPage);
     } catch (error) {
       if (!(error instanceof EndOfPaginationError)) {
-        throw new Error('Test failed intentionally');
+        throw new Error("Test failed intentionally");
       }
     }
   });
 
-  it('retrieves all payloads for an event', async function () {
+  it("retrieves all payloads for an event", async function () {
     // Create a webhook to receive an event
     const webhook = await this.client.Webhook.create({
       url: Fixture.webhookUrl(),
@@ -79,8 +84,8 @@ describe('Event Service', function () {
       !fs.existsSync(
         resolve(
           __dirname,
-          '../cassettes/Event-Service_3026743340/retrieves-all-payloads-for-an-event_3292460230',
-        ),
+          "../cassettes/Event-Service_3026743340/retrieves-all-payloads-for-an-event_3292460230"
+        )
       )
     ) {
       await new Promise((res) => setTimeout(res, 5000)); // Wait enough time for the event to be created
@@ -95,14 +100,14 @@ describe('Event Service', function () {
     const payloads = await this.client.Event.retrieveAllPayloads(event.id);
 
     payloads.forEach((payload) => {
-      expect(payload).to.be.an.instanceOf(Payload);
+      expect(payload.object).to.be.equal("Payload");
     });
 
     // Remove the webhook once we are done testing
     await this.client.Webhook.delete(webhook.id);
   });
 
-  it('retrieves a payload for an event', async function () {
+  it("retrieves a payload for an event", async function () {
     // Create a webhook to receive an event
     const webhook = await this.client.Webhook.create({
       url: Fixture.webhookUrl(),
@@ -117,8 +122,8 @@ describe('Event Service', function () {
       !fs.existsSync(
         resolve(
           __dirname,
-          '../cassettes/Event-Service_3026743340/retrieves-a-payload-for-an-event_1410906611',
-        ),
+          "../cassettes/Event-Service_3026743340/retrieves-a-payload-for-an-event_1410906611"
+        )
       )
     ) {
       await new Promise((res) => setTimeout(res, 5000)); // Wait enough time for the event to be created
@@ -132,12 +137,15 @@ describe('Event Service', function () {
 
     try {
       // Payload does not exist due to queueing, so this will throw an exception
-      await this.client.Event.retrievePayload(event.id, 'payload_11111111111111111111111111111111');
+      await this.client.Event.retrievePayload(
+        event.id,
+        "payload_11111111111111111111111111111111"
+      );
       // If we get here, the test failed, trigger a failed assertion
       expect(true).to.equal(false);
     } catch (error) {
       expect(error).to.be.an.instanceOf(NotFoundError);
-      expect(error.code).to.equal('PAYLOAD.NOT_FOUND');
+      expect(error.code).to.equal("PAYLOAD.NOT_FOUND");
       expect(error.statusCode).to.equal(404);
     }
 

@@ -1,12 +1,12 @@
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPost, { METHODS } from '../../src/easypost';
-import MissingParameterError from '../../src/errors/general/missing_parameter_error';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
+import EasyPost, { METHODS } from "../../dist/cjs/src/easypost";
+import MissingParameterError from "../../dist/cjs/src/errors/general/missing_parameter_error";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
 
 /* eslint-disable func-names */
-describe('EasyPost', function () {
+describe("EasyPost", function () {
   setupPolly.startPolly();
 
   let client;
@@ -15,14 +15,14 @@ describe('EasyPost', function () {
     client = new EasyPost(process.env.EASYPOST_TEST_API_KEY);
   });
 
-  it('throws an error when no API key is provided', async function () {
+  it("throws an error when no API key is provided", async function () {
     expect(() => new EasyPost()).to.throw(
       MissingParameterError,
-      'Missing required parameter: API Key.',
+      "Missing required parameter: API Key."
     );
   });
 
-  it('will log the appropriate values when a request and response hooks are provided', async function () {
+  it("will log the appropriate values when a request and response hooks are provided", async function () {
     let requestConfig;
     const requestHook = (response) => (requestConfig = response);
     let responseConfig;
@@ -33,31 +33,37 @@ describe('EasyPost', function () {
 
     await client.Address.create(Fixture.caAddress1());
 
-    expect(requestConfig).to.be.an('object');
+    expect(requestConfig).to.be.an("object");
     expect(requestConfig.method).to.equal(METHODS.POST);
-    expect(requestConfig.path).to.equal('https://api.easypost.com/v2/addresses');
-    expect(requestConfig.headers).to.be.an('object');
-    expect(requestConfig.headers['Content-Type']).to.equal('application/json');
-    expect(requestConfig.requestTimestamp).to.be.a('number');
-    expect(requestConfig.requestUUID).to.be.a('string');
+    expect(requestConfig.path).to.equal(
+      "https://api.easypost.com/v2/addresses"
+    );
+    expect(requestConfig.headers).to.be.an("object");
+    expect(requestConfig.headers["Content-Type"]).to.equal("application/json");
+    expect(requestConfig.requestTimestamp).to.be.a("number");
+    expect(requestConfig.requestUUID).to.be.a("string");
 
-    expect(responseConfig).to.be.an('object');
+    expect(responseConfig).to.be.an("object");
     expect(responseConfig.method).to.equal(METHODS.POST);
-    expect(responseConfig.path).to.equal('https://api.easypost.com/v2/addresses');
-    expect(responseConfig.requestTimestamp).to.be.a('number');
-    expect(responseConfig.requestUUID).to.be.a('string');
-    expect(responseConfig.httpStatus).to.be.a('number');
-    expect(responseConfig.responseBody).to.be.an('object');
-    expect(responseConfig.responseBody.object).to.equal('Address');
-    expect(responseConfig.headers).to.be.an('object');
-    expect(responseConfig.headers['content-type']).to.contain('application/json');
-    expect(responseConfig.responseTimestamp).to.be.a('number');
+    expect(responseConfig.path).to.equal(
+      "https://api.easypost.com/v2/addresses"
+    );
+    expect(responseConfig.requestTimestamp).to.be.a("number");
+    expect(responseConfig.requestUUID).to.be.a("string");
+    expect(responseConfig.httpStatus).to.be.a("number");
+    expect(responseConfig.responseBody).to.be.an("object");
+    expect(responseConfig.responseBody.object).to.equal("Address");
+    expect(responseConfig.headers).to.be.an("object");
+    expect(responseConfig.headers["content-type"]).to.contain(
+      "application/json"
+    );
+    expect(responseConfig.responseTimestamp).to.be.a("number");
     expect(responseConfig.responseTimestamp).to.be.greaterThanOrEqual(
-      responseConfig.requestTimestamp,
+      responseConfig.requestTimestamp
     );
   });
 
-  it('will add more than one request and response hook', async function () {
+  it("will add more than one request and response hook", async function () {
     let requestConfig1;
     const requestHook1 = (response) => (requestConfig1 = response);
     let requestConfig2;
@@ -74,13 +80,13 @@ describe('EasyPost', function () {
 
     await client.Address.create(Fixture.caAddress1());
 
-    expect(requestConfig1).to.be.an('object');
-    expect(requestConfig2).to.be.an('object');
-    expect(responseConfig1).to.be.an('object');
-    expect(responseConfig2).to.be.an('object');
+    expect(requestConfig1).to.be.an("object");
+    expect(requestConfig2).to.be.an("object");
+    expect(responseConfig1).to.be.an("object");
+    expect(responseConfig2).to.be.an("object");
   });
 
-  it('will unsubscribe from requests and responses', async function () {
+  it("will unsubscribe from requests and responses", async function () {
     let requestConfig;
     const requestHook = (response) => (requestConfig = response);
     let responseConfig;
@@ -91,8 +97,8 @@ describe('EasyPost', function () {
 
     await client.Address.create(Fixture.caAddress1());
 
-    expect(requestConfig).to.be.an('object');
-    expect(responseConfig).to.be.an('object');
+    expect(requestConfig).to.be.an("object");
+    expect(responseConfig).to.be.an("object");
 
     client.removeRequestHook(requestHook);
     client.removeResponseHook(responseHook);
@@ -106,7 +112,7 @@ describe('EasyPost', function () {
     expect(responseConfig).to.be.null;
   });
 
-  it('will clear all request and response hooks', async function () {
+  it("will clear all request and response hooks", async function () {
     let requestConfig1;
     const requestHook1 = (response) => (requestConfig1 = response);
     let requestConfig2;
@@ -123,10 +129,10 @@ describe('EasyPost', function () {
 
     await client.Address.create(Fixture.caAddress1());
 
-    expect(requestConfig1).to.be.an('object');
-    expect(requestConfig2).to.be.an('object');
-    expect(responseConfig1).to.be.an('object');
-    expect(responseConfig2).to.be.an('object');
+    expect(requestConfig1).to.be.an("object");
+    expect(requestConfig2).to.be.an("object");
+    expect(responseConfig1).to.be.an("object");
+    expect(responseConfig2).to.be.an("object");
 
     client.clearRequestHooks();
     client.clearResponseHooks();

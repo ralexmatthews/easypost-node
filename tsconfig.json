@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
+    "downlevelIteration": true,
+    "outDir": "./types"
+  },
+  "include": ["./src"]
+}

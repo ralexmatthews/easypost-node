@@ -1,17 +1,17 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import EndOfPaginationError from '../../src/errors/general/end_of_pagination_error';
-import * as setupPolly from '../helpers/setup_polly';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
+import * as setupPolly from "../helpers/setup_polly";
 import {
   MockMiddleware,
   MockRequest,
   MockRequestMatchRule,
   MockRequestResponseInfo,
-} from '../helpers/mocking';
+} from "../helpers/mocking";
 
-describe('Base Service', function () {
+describe("Base Service", function () {
   setupPolly.startPolly();
 
   beforeEach(function () {
@@ -19,7 +19,7 @@ describe('Base Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('getNextPage collects all pages', async function () {
+  it("getNextPage collects all pages", async function () {
     const pageSize = 1; // Doesn't matter what this is, we're mocking the response
 
     let allResults = [];
@@ -30,7 +30,7 @@ describe('Base Service', function () {
     let firstPageResponse = {
       scan_forms: [
         {
-          id: 'sf_123',
+          id: "sf_123",
         },
       ],
       has_more: true,
@@ -38,8 +38,8 @@ describe('Base Service', function () {
     let middleware = (request) => {
       return new MockMiddleware(request, [
         new MockRequest(
-          new MockRequestMatchRule('GET', 'v2\\/scan_forms'),
-          new MockRequestResponseInfo(200, firstPageResponse),
+          new MockRequestMatchRule("GET", "v2\\/scan_forms"),
+          new MockRequestResponseInfo(200, firstPageResponse)
         ),
       ]);
     };
@@ -56,7 +56,7 @@ describe('Base Service', function () {
     let secondPageResponse = {
       scan_forms: [
         {
-          id: 'sf_456',
+          id: "sf_456",
         },
       ],
       has_more: true,
@@ -64,8 +64,8 @@ describe('Base Service', function () {
     middleware = (request) => {
       return new MockMiddleware(request, [
         new MockRequest(
-          new MockRequestMatchRule('GET', 'v2\\/scan_forms'),
-          new MockRequestResponseInfo(200, secondPageResponse),
+          new MockRequestMatchRule("GET", "v2\\/scan_forms"),
+          new MockRequestResponseInfo(200, secondPageResponse)
         ),
       ]);
     };
@@ -73,7 +73,10 @@ describe('Base Service', function () {
       requestMiddleware: middleware,
     });
 
-    let secondPage = await this.client.ScanForm.getNextPage(previousPage, pageSize);
+    let secondPage = await this.client.ScanForm.getNextPage(
+      previousPage,
+      pageSize
+    );
     allResults = allResults.concat(secondPage.scan_forms);
     previousPage = secondPage;
 
@@ -82,7 +85,7 @@ describe('Base Service', function () {
     let thirdPageResponse = {
       scan_forms: [
         {
-          id: 'sf_789',
+          id: "sf_789",
         },
       ],
       has_more: false,
@@ -90,8 +93,8 @@ describe('Base Service', function () {
     middleware = (request) => {
       return new MockMiddleware(request, [
         new MockRequest(
-          new MockRequestMatchRule('GET', 'v2\\/scan_forms'),
-          new MockRequestResponseInfo(200, thirdPageResponse),
+          new MockRequestMatchRule("GET", "v2\\/scan_forms"),
+          new MockRequestResponseInfo(200, thirdPageResponse)
         ),
       ]);
     };
@@ -99,7 +102,10 @@ describe('Base Service', function () {
       requestMiddleware: middleware,
     });
 
-    let thirdPage = await this.client.ScanForm.getNextPage(previousPage, pageSize);
+    let thirdPage = await this.client.ScanForm.getNextPage(
+      previousPage,
+      pageSize
+    );
     allResults = allResults.concat(thirdPage.scan_forms);
     previousPage = thirdPage;
 
@@ -117,7 +123,7 @@ describe('Base Service', function () {
     }
   });
 
-  it('getNextPage reuses params passed into all', async function () {
+  it("getNextPage reuses params passed into all", async function () {
     const pageSize = 1; // Doesn't matter what this is, we're mocking the response
 
     let previousPage = null;
@@ -127,7 +133,7 @@ describe('Base Service', function () {
     const firstPageResponse = {
       scan_forms: [
         {
-          id: 'sf_123',
+          id: "sf_123",
         },
       ],
       has_more: true,
@@ -135,8 +141,8 @@ describe('Base Service', function () {
     let middleware = (request) => {
       return new MockMiddleware(request, [
         new MockRequest(
-          new MockRequestMatchRule('GET', 'v2\\/scan_forms'),
-          new MockRequestResponseInfo(200, firstPageResponse),
+          new MockRequestMatchRule("GET", "v2\\/scan_forms"),
+          new MockRequestResponseInfo(200, firstPageResponse)
         ),
       ]);
     };
@@ -144,7 +150,10 @@ describe('Base Service', function () {
       requestMiddleware: middleware,
     });
 
-    const firstPage = await this.client.ScanForm.all({ page_size: pageSize, foo: 'foo' });
+    const firstPage = await this.client.ScanForm.all({
+      page_size: pageSize,
+      foo: "foo",
+    });
     previousPage = firstPage;
 
     // Mock the first "get next page" call with more to collect after
@@ -152,7 +161,7 @@ describe('Base Service', function () {
     const secondPageResponse = {
       scan_forms: [
         {
-          id: 'sf_456',
+          id: "sf_456",
         },
       ],
       has_more: true,
@@ -160,8 +169,8 @@ describe('Base Service', function () {
     middleware = (request) => {
       return new MockMiddleware(request, [
         new MockRequest(
-          new MockRequestMatchRule('GET', 'v2\\/scan_forms'),
-          new MockRequestResponseInfo(200, secondPageResponse),
+          new MockRequestMatchRule("GET", "v2\\/scan_forms"),
+          new MockRequestResponseInfo(200, secondPageResponse)
         ),
       ]);
     };
@@ -171,8 +180,8 @@ describe('Base Service', function () {
 
     const secondPage = await this.client.ScanForm.getNextPage(previousPage);
 
-    expect(secondPage._params.foo).to.equal('foo');
-    expect(secondPage.scan_forms[0]._params.foo).to.equal('foo');
+    expect(secondPage._params.foo).to.equal("foo");
+    expect(secondPage.scan_forms[0]._params.foo).to.equal("foo");
     expect(secondPage._params.page_size).to.equal(pageSize);
     expect(secondPage.scan_forms[0]._params.page_size).to.equal(pageSize);
   });

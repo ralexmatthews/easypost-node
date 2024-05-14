@@ -1,14 +1,13 @@
 /* eslint-disable func-names */
-import { expect } from 'chai';
+import { expect } from "chai";
 
-import EasyPostClient from '../../src/easypost';
-import EndOfPaginationError from '../../src/errors/general/end_of_pagination_error';
-import ScanForm from '../../src/models/scan_form';
-import Fixture from '../helpers/fixture';
-import * as setupPolly from '../helpers/setup_polly';
-import { withoutParams } from '../helpers/utils';
+import EasyPostClient from "../../dist/cjs/src/easypost";
+import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
+import Fixture from "../helpers/fixture";
+import * as setupPolly from "../helpers/setup_polly";
+import { withoutParams } from "../helpers/utils";
 
-describe('ScanForm Service', function () {
+describe("ScanForm Service", function () {
   setupPolly.startPolly();
 
   before(function () {
@@ -20,19 +19,23 @@ describe('ScanForm Service', function () {
     setupPolly.setupCassette(server);
   });
 
-  it('creates a scanform', async function () {
-    const shipment = await this.client.Shipment.create(Fixture.oneCallBuyShipment());
+  it("creates a scanform", async function () {
+    const shipment = await this.client.Shipment.create(
+      Fixture.oneCallBuyShipment()
+    );
 
     const scanform = await this.client.ScanForm.create({
       shipments: [shipment],
     });
 
-    expect(scanform).to.be.an.instanceOf(ScanForm);
+    expect(scanform.object).to.be.equal("ScanForm");
     expect(scanform.id).to.match(/^sf_/);
   });
 
-  it('retrieves a scanform', async function () {
-    const shipment = await this.client.Shipment.create(Fixture.oneCallBuyShipment());
+  it("retrieves a scanform", async function () {
+    const shipment = await this.client.Shipment.create(
+      Fixture.oneCallBuyShipment()
+    );
 
     const scanform = await this.client.ScanForm.create({
       shipments: [shipment],
@@ -40,11 +43,13 @@ describe('ScanForm Service', function () {
 
     const retrievedScanform = await this.client.ScanForm.retrieve(scanform.id);
 
-    expect(retrievedScanform).to.be.an.instanceOf(ScanForm);
-    expect(withoutParams(retrievedScanform)).to.deep.include(withoutParams(scanform));
+    expect(retrievedScanform.object).to.be.equal("ScanForm");
+    expect(withoutParams(retrievedScanform)).to.deep.include(
+      withoutParams(scanform)
+    );
   });
 
-  it('retrieves all scanforms', async function () {
+  it("retrieves all scanforms", async function () {
     const scanforms = await this.client.ScanForm.all({
       page_size: Fixture.pageSize(),
     });
@@ -54,14 +59,19 @@ describe('ScanForm Service', function () {
     expect(scanformsArray.length).to.be.lessThanOrEqual(Fixture.pageSize());
     expect(scanforms.has_more).to.exist;
     scanformsArray.forEach((scanform) => {
-      expect(scanform).to.be.an.instanceOf(ScanForm);
+      expect(scanform.object).to.be.equal("ScanForm");
     });
   });
 
-  it('retrieves next page of scanforms', async function () {
+  it("retrieves next page of scanforms", async function () {
     try {
-      const scanforms = await this.client.ScanForm.all({ page_size: Fixture.pageSize() });
-      const nextPage = await this.client.ScanForm.getNextPage(scanforms, Fixture.pageSize());
+      const scanforms = await this.client.ScanForm.all({
+        page_size: Fixture.pageSize(),
+      });
+      const nextPage = await this.client.ScanForm.getNextPage(
+        scanforms,
+        Fixture.pageSize()
+      );
 
       const firstIdOfFirstPage = scanforms.scan_forms[0].id;
       const firstIdOfSecondPage = nextPage.scan_forms[0].id;
@@ -69,7 +79,7 @@ describe('ScanForm Service', function () {
       expect(firstIdOfFirstPage).to.not.equal(firstIdOfSecondPage);
     } catch (error) {
       if (!(error instanceof EndOfPaginationError)) {
-        throw new Error('Test failed intentionally');
+        throw new Error("Test failed intentionally");
       }
     }
   });
