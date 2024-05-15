@@ -1,8 +1,7 @@
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
+import EasyPostClient, { SignatureVerificationError } from "../..";
 import Fixture from "../helpers/fixture";
-import SignatureVerificationError from "../../dist/cjs/src/errors/general/signature_verification_error";
 import * as setupPolly from "../helpers/setup_polly";
 import { withoutParams } from "../helpers/utils";
 

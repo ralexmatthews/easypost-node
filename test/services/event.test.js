@@ -3,11 +3,9 @@ import fs from "fs";
 import { resolve } from "path";
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
+import EasyPostClient, { NotFoundError, EndOfPaginationError } from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
-import NotFoundError from "../../dist/cjs/src/errors/api/not_found_error";
-import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
 
 describe("Event Service", function () {
   setupPolly.startPolly();

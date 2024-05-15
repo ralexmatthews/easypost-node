@@ -4,13 +4,13 @@ import { TBatchStatus } from "../batch_service";
 import { ICustomsInfo } from "../customs_info_service";
 import { IFee, IInsurance } from "../insurance_service";
 import { IParcel } from "../parcel_service";
+import { IRate } from "../rate_service";
 import { IScanForm } from "../scan_form_service";
 import { ITracker } from "../tracker_service";
 import { IForm } from "./Form";
 import { IMessage } from "./Message";
 import { IOptions, LabelFormat } from "./Options";
 import { IPostageLabel } from "./PostageLabel";
-import { IRate } from "./Rate";
 import { IShipmentCreateParameters } from "./ShipmentCreateParameters";
 import { IShipmentListParameters } from "./ShipmentListParameters";
 

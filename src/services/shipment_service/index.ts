@@ -1,9 +1,8 @@
 import EasyPost from "../..";
 import Constants from "../../constants";
 import baseService from "../base_service";
-import { ISmartRate } from "../rate_service";
+import { IRate, ISmartRate } from "../rate_service";
 import { IOptions, LabelFormat } from "./Options";
-import { IRate } from "./Rate";
 import { IShipment } from "./Shipment";
 import { IShipmentCreateParameters } from "./ShipmentCreateParameters";
 import { IShipmentListParameters } from "./ShipmentListParameters";
@@ -11,11 +10,22 @@ import { IShipmentListParameters } from "./ShipmentListParameters";
 export * from "./Form";
 export * from "./Message";
 export * from "./PostageLabel";
-export * from "./Rate";
 export * from "./Shipment";
 export * from "./ShipmentCreateParameters";
 export * from "./ShipmentListParameters";
 export * from "./Options";
+
+const addLowestRateToShipment = (
+  shipment: IShipment
+): IShipment & {
+  lowestRate: (carriers?: string[], services?: string[]) => IRate;
+} => {
+  return {
+    ...shipment,
+    lowestRate: (carriers?: string[], services?: string[]) =>
+      Constants.Utils.getLowestRate(shipment.rates, carriers, services),
+  };
+};
 
 export default (easypostClient: EasyPost) =>
   /**
@@ -36,7 +46,9 @@ export default (easypostClient: EasyPost) =>
         shipment: params,
       };
 
-      return this._create(url, wrappedParams);
+      const shipment = await this._create<IShipment>(url, wrappedParams);
+
+      return addLowestRateToShipment(shipment);
     }
 
     /**
@@ -75,10 +87,12 @@ export default (easypostClient: EasyPost) =>
       try {
         const response = await easypostClient._post(url, wrappedParams);
 
-        return this._convertToEasyPostObject<IShipment>(
+        const shipment = this._convertToEasyPostObject<IShipment>(
           response.body,
           wrappedParams
         );
+
+        return addLowestRateToShipment(shipment);
       } catch (e) {
         return Promise.reject(e);
       }
@@ -98,10 +112,11 @@ export default (easypostClient: EasyPost) =>
       try {
         const response = await easypostClient._get(url, wrappedParams);
 
-        return this._convertToEasyPostObject<IShipment>(
+        const shipment = this._convertToEasyPostObject<IShipment>(
           response.body,
           wrappedParams
         );
+        return addLowestRateToShipment(shipment);
       } catch (e) {
         return Promise.reject(e);
       }
@@ -120,10 +135,11 @@ export default (easypostClient: EasyPost) =>
       try {
         const response = await easypostClient._post(url, wrappedParams);
 
-        return this._convertToEasyPostObject<IShipment>(
+        const shipment = this._convertToEasyPostObject<IShipment>(
           response.body,
           wrappedParams
         );
+        return addLowestRateToShipment(shipment);
       } catch (e) {
         return Promise.reject(e);
       }
@@ -163,10 +179,11 @@ export default (easypostClient: EasyPost) =>
       try {
         const response = await easypostClient._post(url, wrappedParams);
 
-        return this._convertToEasyPostObject<IShipment>(
+        const shipment = this._convertToEasyPostObject<IShipment>(
           response.body,
           wrappedParams
         );
+        return addLowestRateToShipment(shipment);
       } catch (e) {
         return Promise.reject(e);
       }
@@ -196,10 +213,11 @@ export default (easypostClient: EasyPost) =>
       try {
         const response = await easypostClient._post(url, wrappedParams);
 
-        return this._convertToEasyPostObject<IShipment>(
+        const shipment = this._convertToEasyPostObject<IShipment>(
           response.body,
           wrappedParams
         );
+        return addLowestRateToShipment(shipment);
       } catch (e) {
         return Promise.reject(e);
       }
@@ -217,7 +235,10 @@ export default (easypostClient: EasyPost) =>
       try {
         const response = await easypostClient._post(url);
 
-        return this._convertToEasyPostObject<IShipment>(response.body);
+        const shipment = this._convertToEasyPostObject<IShipment>(
+          response.body
+        );
+        return addLowestRateToShipment(shipment);
       } catch (e) {
         return Promise.reject(e);
       }
@@ -252,7 +273,11 @@ export default (easypostClient: EasyPost) =>
     static async all(params: IShipmentListParameters = {}) {
       const url = "shipments";
 
-      return this._all<{ shipments: IShipment[] }>(url, params);
+      const result = await this._all<{ shipments: IShipment[] }>(url, params);
+      return {
+        ...result,
+        shipments: result.shipments.map(addLowestRateToShipment),
+      };
     }
 
     /**
@@ -264,12 +289,16 @@ export default (easypostClient: EasyPost) =>
     static async getNextPage(shipments: { shipments: any[] }, pageSize = null) {
       const url = "shipments";
 
-      return this._getNextPage<{ shipments: IShipment[] }>(
+      const result = await this._getNextPage<{ shipments: IShipment[] }>(
         url,
         "shipments",
         shipments,
         pageSize
       );
+      return {
+        ...result,
+        shipments: result.shipments.map(addLowestRateToShipment),
+      };
     }
 
     /**
@@ -281,7 +310,8 @@ export default (easypostClient: EasyPost) =>
     static async retrieve(id: string) {
       const url = `shipments/${id}`;
 
-      return this._retrieve<IShipment>(url);
+      const shipment = await this._retrieve<IShipment>(url);
+      return addLowestRateToShipment(shipment);
     }
 
     /**

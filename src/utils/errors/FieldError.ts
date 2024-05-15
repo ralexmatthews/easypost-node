@@ -9,5 +9,3 @@ export type IFieldError = {
    */
   message: string;
 };
-
-export default {};

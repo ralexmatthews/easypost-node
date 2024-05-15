@@ -30,7 +30,6 @@
   "globals": {
     "expect": true
   },
-  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 13
   }

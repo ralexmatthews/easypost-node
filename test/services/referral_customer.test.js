@@ -1,7 +1,6 @@
 import { expect } from "chai";
 
-import EasyPost from "../../dist/cjs/src/easypost";
-import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
+import EasyPost, { EndOfPaginationError } from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
 

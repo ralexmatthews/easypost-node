@@ -1,7 +1,6 @@
 import { expect } from "chai";
 
-import EasyPost, { METHODS } from "../../dist/cjs/src/easypost";
-import MissingParameterError from "../../dist/cjs/src/errors/general/missing_parameter_error";
+import EasyPost, { METHODS, MissingParameterError } from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
 

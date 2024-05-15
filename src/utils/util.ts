@@ -132,7 +132,8 @@ export default class Utils {
     eventBody: Buffer,
     headers: Record<string, string>,
     webhookSecret: string
-  ): object {
+  ): any {
+    let webhook = {};
     const easypostHmacSignature =
       headers["X-Hmac-Signature"] ?? headers["x-hmac-signature"] ?? null;
 
@@ -155,20 +156,23 @@ export default class Utils {
             Buffer.from(digest, "utf8")
           )
         ) {
-          return JSON.parse(eventBody.toString());
+          webhook = JSON.parse(eventBody.toString());
+        } else {
+          throw new SignatureVerificationError({
+            message: Constants.WEBHOOK_DOES_NOT_MATCH,
+          });
         }
-
-        throw new SignatureVerificationError({
-          message: Constants.WEBHOOK_DOES_NOT_MATCH,
-        });
       } catch (e) {
         throw new SignatureVerificationError({
           message: Constants.WEBHOOK_DOES_NOT_MATCH,
         });
       }
+    } else {
+      throw new SignatureVerificationError({
+        message: Constants.INVALID_WEBHOOK_SIGNATURE,
+      });
     }
-    throw new SignatureVerificationError({
-      message: Constants.INVALID_WEBHOOK_SIGNATURE,
-    });
+
+    return webhook;
   }
 }

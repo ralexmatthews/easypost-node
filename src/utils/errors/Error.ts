@@ -25,5 +25,3 @@ export type IError = {
    */
   errors: IFieldError[];
 };
-
-export default {};

@@ -1,6 +1,6 @@
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
+import EasyPostClient from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
 

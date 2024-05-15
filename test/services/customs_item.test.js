@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { expect } from "chai";
 
-import EasyPost from "../../dist/cjs/src/easypost";
+import EasyPost from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
 import { withoutParams } from "../helpers/utils";

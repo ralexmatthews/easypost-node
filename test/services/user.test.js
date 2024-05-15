@@ -1,10 +1,9 @@
 /* eslint-disable no-param-reassign */
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
+import EasyPostClient, { EndOfPaginationError } from "../..";
 import * as setupPolly from "../helpers/setup_polly";
 import Fixture from "../helpers/fixture";
-import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
 
 /* eslint-disable func-names */
 describe("User Service", function () {

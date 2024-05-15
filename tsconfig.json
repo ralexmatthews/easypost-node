@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "emitDeclarationOnly": true,
-    "declaration": true,
     "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,

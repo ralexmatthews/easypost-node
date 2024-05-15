@@ -1,8 +1,7 @@
 /* eslint-disable func-names */
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
-import FilteringError from "../../dist/cjs/src/errors/general/filtering_error";
+import EasyPostClient, { FilteringError } from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
 

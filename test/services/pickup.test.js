@@ -1,11 +1,9 @@
 /* eslint-disable func-names */
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
+import EasyPostClient, { FilteringError, EndOfPaginationError } from "../..";
 import Fixture from "../helpers/fixture";
-import FilteringError from "../../dist/cjs/src/errors/general/filtering_error";
 import * as setupPolly from "../helpers/setup_polly";
-import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
 import { withoutParams } from "../helpers/utils";
 
 describe("Pickup Service", function () {

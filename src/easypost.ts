@@ -14,7 +14,7 @@ import BetaReferralCustomerService from "./services/beta_referral_customer_servi
 import BillingService from "./services/billing_service";
 import CarrierAccountService from "./services/carrier_account_service";
 import CarrierMetadataService from "./services/carrier_metadata_service";
-import CarrierTypeService from "./services/carrier_type_service/index.ts";
+import CarrierTypeService from "./services/carrier_type_service";
 import CustomsInfoService from "./services/customs_info_service";
 import CustomsItemService from "./services/customs_item_service";
 import EndShipperService from "./services/end_shipper_service";
@@ -35,6 +35,11 @@ import WebhookService from "./services/webhook_service";
 import Utils from "./utils/util";
 
 import util from "node:util";
+
+export * from "./errors";
+export * from "./services";
+export * from "./utils/errors";
+export * from "./constants";
 
 /** How many milliseconds in a second. */
 export const MS_SECOND = 1000;

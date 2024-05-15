@@ -1,9 +1,10 @@
 import { expect } from "chai";
 
-import EasyPostClient from "../../dist/cjs/src/easypost";
-import EndOfPaginationError from "../../dist/cjs/src/errors/general/end_of_pagination_error";
-import FilteringError from "../../dist/cjs/src/errors/general/filtering_error";
-import InvalidParameterError from "../../dist/cjs/src/errors/general/invalid_parameter_error";
+import EasyPostClient, {
+  EndOfPaginationError,
+  FilteringError,
+  InvalidParameterError,
+} from "../..";
 import Fixture from "../helpers/fixture";
 import * as setupPolly from "../helpers/setup_polly";
 
